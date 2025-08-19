@@ -11,11 +11,10 @@ export async function PATCH(req, { params }) {
     // Force only valid fields
     const validUpdates = {
       bankAccounts: Boolean(updates.bankAccounts),
-      properties: Boolean(updates.properties),
-      policies: Boolean(updates.policies),
+     
     };
 
-    const clientDocRef = doc(db, "Creditscore", id);
+    const clientDocRef = doc(db, "Banks", id);
     await updateDoc(clientDocRef, validUpdates);
 
     return new Response(JSON.stringify({ message: "Updated successfully" }), { status: 200 });

@@ -13,13 +13,12 @@ export async function POST(req) {
     }
 
     // Save the correct boolean values from the client input
-    const docRef = await addDoc(collection(db, "Creditscore"), {
+    const docRef = await addDoc(collection(db, "Banks"), {
       name: client.name,
       surname: client.surname,
       idNumber: client.idNumber,
       bankAccounts: !!client.bankAccounts,
-      properties: !!client.properties,
-      policies: !!client.policies,
+      
     });
 
     return new Response(
@@ -37,7 +36,7 @@ export async function POST(req) {
 // GET: Fetch all clients
 export async function GET() {
   try {
-    const snapshot = await getDocs(collection(db, "Creditscore"));
+    const snapshot = await getDocs(collection(db, "Banks"));
     const clients = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

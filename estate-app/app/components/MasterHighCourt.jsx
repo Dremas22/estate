@@ -1,5 +1,5 @@
 "use client";
-import AddClientsToCreditscore from "./addClientsToCreditscore";
+import AddClientsToBanks from "./addClientsToBanks";
 import AddClientsToHomeAffairs from "./addClientsToHomeAffairs";
 import Gateway from "./gateway";
 
@@ -23,7 +23,7 @@ const MasterHighCourtHomePage = () => {
         <div className="flex flex-col sm:flex-row sm:gap-8 gap-6 justify-center items-center">
          
             <AddClientsToHomeAffairs />
-            <AddClientsToCreditscore />
+            <AddClientsToBanks />
           
         </div>
       </div>

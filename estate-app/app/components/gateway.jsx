@@ -7,7 +7,7 @@ const Gateway = () => {
   const router = useRouter();
   const [clients, setClients] = useState([]); // now plural
   const [error, setError] = useState("");
-  const [creditInfo, setCreditInfo] = useState(null);
+  const [banksData, setBanksData] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -35,22 +35,20 @@ const Gateway = () => {
 
   
 
- const handleCheckCreditScore = async (client) => {
+ const handleCheckBanks = async (client) => {
   try {
-    const res = await fetch("/api/Creditscore");
+    const res = await fetch("/api/Banks");
     const allClients = await res.json();
 
     const found = allClients.find((c) => c.idNumber === client.idNumber);
 
     if (!found) {
-      setCreditInfo({ hasAssets: false });
+      setBanksData({ hasAssets: false });
     } else {
       const assets = [];
       if (found.bankAccount || found.bankAccounts) assets.push("Bank Account");
-      if (found.policies) assets.push("Policies");
-      if (found.property || found.properties) assets.push("Property");
 
-      setCreditInfo({
+      setBanksData({
         hasAssets: assets.length > 0,
         assets,
         ...found,
@@ -94,7 +92,7 @@ const Gateway = () => {
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => handleCheckCreditScore(client)}
+                      onClick={() => handleCheckBanks(client)}
                       className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                     >
                       view assets
@@ -114,13 +112,13 @@ const Gateway = () => {
             <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
               Assests Info:
             </h2>
-            {creditInfo?.hasAssets ? (
+            {banksData?.hasAssets ? (
               <div className="space-y-2 text-center">
                 <p className="text-gray-700">
-                  <strong>{creditInfo.name} {creditInfo.surname}</strong> had the following assets:
+                  <strong>{banksData.name} {banksData.surname}</strong> had the following assets:
                 </p>
                 <ul className="text-left list-disc list-inside">
-                  {creditInfo.assets.map((asset, index) => (
+                  {banksData.assets.map((asset, index) => (
                     <li key={index}>{asset}</li>
                   ))}
                 </ul>
