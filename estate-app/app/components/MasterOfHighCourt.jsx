@@ -10,7 +10,7 @@ const MasterHighCourtHomePage = () => {
   return (
     <div className="flex-col items-center justify-start bg-gray-100 px-6 py-10 w-full min-h-screen">
       <h1 className="text-4xl font-bold text-center text-gray-900 mb-2">
-        Master High Court
+        Master Of High Court
       </h1>
       <p className="text-center text-gray-600 text-lg mb-8">
         powered by Estate App

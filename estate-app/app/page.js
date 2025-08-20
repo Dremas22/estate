@@ -1,5 +1,5 @@
 
-import MasterHighCourtHomePage from "./components/MasterHighCourt";
+import MasterHighCourtHomePage from "./components/MasterOfHighCourt";
 
 export default function Home() {
   return (
