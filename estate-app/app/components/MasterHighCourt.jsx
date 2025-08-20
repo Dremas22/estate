@@ -1,6 +1,9 @@
 "use client";
+
 import AddClientsToBanks from "./addClientsToBanks";
 import AddClientsToHomeAffairs from "./addClientsToHomeAffairs";
+import AddClientsToDeedsOffice from "./addClientsToDeedsOffice";
+import AddClientsToInsurances from "./addClientsToInsurances";
 import Gateway from "./gateway";
 
 const MasterHighCourtHomePage = () => {
@@ -20,11 +23,24 @@ const MasterHighCourtHomePage = () => {
         </div>
 
         {/* 2-column Grid: Home Affairs & Credit Score */}
-        <div className="flex flex-col sm:flex-row sm:gap-8 gap-6 justify-center items-center">
-         
+        <div className="flex flex-col gap-6 items-center">
+          {/* Home Affairs always on top */}
+          <div>
             <AddClientsToHomeAffairs />
-            <AddClientsToBanks />
-          
+          </div>
+
+          {/* Banks & Deeds Office side by side */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div>
+              <AddClientsToBanks />
+            </div>
+            <div>
+              <AddClientsToDeedsOffice />
+            </div>
+            <div>
+              <AddClientsToInsurances />
+            </div>
+          </div>
         </div>
       </div>
     </div>

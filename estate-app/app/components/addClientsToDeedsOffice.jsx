@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 
-const AddClientsToBanks = () => {
+const AddClientsToDeedsOffice = () => {
   const [form, setForm] = useState({
     name: "",
     surname: "",
     idNumber: "",
-    bankAccounts: false,
+    properties: false,
    
   });
 
-  const [clientBanks, setClientBanks] = useState([]);
+  const [clientProperties, setClientProperties] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -29,7 +29,7 @@ const AddClientsToBanks = () => {
     try {
       const newClient = { ...form };
 
-      const res = await fetch("http://localhost:3000/api/Banks", {
+      const res = await fetch("http://localhost:3000/api/DeedsOffice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newClient),
@@ -40,12 +40,12 @@ const AddClientsToBanks = () => {
         throw new Error(errData.error || "Failed to add client");
       }
 
-      await fetchClientsBank();
+      await fetchClientsProperties();
       setForm({
         name: "",
         surname: "",
         idNumber: "",
-        bankAccounts: false,
+        properties: false,
         
       });
     } catch (err) {
@@ -55,26 +55,26 @@ const AddClientsToBanks = () => {
     }
   };
 
-  const fetchClientsBank = async () => {
+  const fetchClientsProperties = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/Banks");
+      const res = await fetch("http://localhost:3000/api/DeedsOffice");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch clients");
-      setClientBanks(data);
+      setClientProperties(data);
     } catch (err) {
       setError(err.message);
     }
   };
 
   useEffect(() => {
-    fetchClientsBank();
+    fetchClientsProperties();
   }, []);
 
   return (
     <div className="bg-[#ced4da] p-4 sm:p-6 w-full max-w-screen-xl mx-auto mt-10 rounded-lg shadow">
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md w-full">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
-          Banks
+          Deeds Office
         </h1>
 
         <div className="space-y-4">
@@ -107,11 +107,11 @@ const AddClientsToBanks = () => {
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                name="bankAccounts"
-                checked={form.bankAccounts}
+                name="properties"
+                checked={form.properties}
                 onChange={handleChange}
               />
-              Has Bank Accounts
+              Has Properties
             </label>
            
           </div>
@@ -135,19 +135,19 @@ const AddClientsToBanks = () => {
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Surname</th>
               <th className="px-4 py-3">ID Number</th>
-              <th className="px-4 py-3">Bank Accounts</th>
+              <th className="px-4 py-3">Properties</th>
             
             </tr>
           </thead>
           <tbody>
-            {clientBanks.length > 0 ? (
-              clientBanks.map((client) => (
+            {clientProperties.length > 0 ? (
+              clientProperties.map((client) => (
                 <tr key={client.id} className="border-t border-gray-200">
                   <td className="px-4 py-3">{client.name}</td>
                   <td className="px-4 py-3">{client.surname}</td>
                   <td className="px-4 py-3">{client.idNumber}</td>
                   <td className="px-4 py-3">
-                    {client.bankAccounts ? "Yes" : "None"}
+                    {client.properties ? "Yes" : "None"}
                   </td>
                   
                 </tr>
@@ -166,4 +166,4 @@ const AddClientsToBanks = () => {
   );
 };
 
-export default AddClientsToBanks;
+export default AddClientsToDeedsOffice;

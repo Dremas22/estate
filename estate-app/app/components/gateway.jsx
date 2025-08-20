@@ -8,6 +8,8 @@ const Gateway = () => {
   const [clients, setClients] = useState([]); // now plural
   const [error, setError] = useState("");
   const [banksData, setBanksData] = useState(null);
+  const [deedsData, setDeedsData] = useState(null);
+  const [insurancesData, setInsurancesData] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
@@ -17,7 +19,7 @@ const Gateway = () => {
   const fetchAllDeceased = async () => {
     setError("");
     try {
-      const res = await fetch("/api/CheckhomeAffairs", {
+      const res = await fetch("http://localhost:3000/api/CheckhomeAffairs", {
         method: "POST",
         body: JSON.stringify({}), // no ID sent
       });
@@ -33,38 +35,122 @@ const Gateway = () => {
     }
   };
 
-  
+  //checks if deceased has bank accounts
+  const handleCheckBanks = async (client) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Banks");
+      const allClients = await res.json();
 
- const handleCheckBanks = async (client) => {
-  try {
-    const res = await fetch("/api/Banks");
-    const allClients = await res.json();
+      const found = allClients.find((c) => c.idNumber === client.idNumber);
 
-    const found = allClients.find((c) => c.idNumber === client.idNumber);
+      if (!found) {
+        setBanksData({ hasAssets: false });
+      } else {
+        const assets = [];
+        if (found.bankAccount || found.bankAccounts)
+          assets.push("Bank Account");
 
-    if (!found) {
-      setBanksData({ hasAssets: false });
-    } else {
-      const assets = [];
-      if (found.bankAccount || found.bankAccounts) assets.push("Bank Account");
+        setBanksData({
+          hasAssets: assets.length > 0,
+          assets,
+          ...found,
+        });
+      }
 
-      setBanksData({
-        hasAssets: assets.length > 0,
-        assets,
-        ...found,
-      });
+      setShowOverlay(true);
+    } catch (err) {
+      console.error("Failed to fetch banks", err);
     }
+  };
 
-    setShowOverlay(true);
-  } catch (err) {
-    console.error("Failed to fetch creditscore", err);
-  }
-};
+  // checks if deceased has properties at the deeds officce
+  const handleCheckDeedsOffce = async (client) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/DeedsOffice");
+      const allClients = await res.json();
 
+      const found = allClients.find((c) => c.idNumber === client.idNumber);
+
+      if (!found) {
+        setDeedsData({ hasAssets: false });
+      } else {
+        const assets = [];
+        if (found.properties || found.properties) assets.push("Properties");
+
+        setDeedsData({
+          hasAssets: assets.length > 0,
+          assets,
+          ...found,
+        });
+      }
+
+      setShowOverlay(true);
+    } catch (err) {
+      console.error("Failed to fetch Properties", err);
+    }
+  };
+
+  // checks if deceased has insurances at the deeds officce
+  const handleCheckInsurances = async (client) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Insurances");
+      const allClients = await res.json();
+
+      const found = allClients.find((c) => c.idNumber === client.idNumber);
+
+      if (!found) {
+        setInsurancesData({ hasAssets: false });
+      } else {
+        const assets = [];
+        if (found.properties || found.properties) assets.push("Insurances");
+
+        setInsurancesData({
+          hasAssets: assets.length > 0,
+          assets,
+          ...found,
+        });
+      }
+
+      setShowOverlay(true);
+    } catch (err) {
+      console.error("Failed to fetch Properties", err);
+    }
+  };
+
+  const handleCheckAssets = (client) => {
+    handleCheckBanks(client);
+    handleCheckDeedsOffce(client);
+    handleCheckInsurances(client);
+  };
+
+  // inside Gateway component
+
+  // save deceased client to firebase (Master High Court)
+  const handleSaveDeceasedClientsData = async (client) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/MasterHighCourt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(client),
+      });
+
+      if (!res.ok) {
+        const text = await res.text(); // don’t force JSON if error
+        throw new Error(`Server error: ${res.status} - ${text}`);
+      }
+
+      const data = await res.json();
+      alert(
+        `Client ${client.name} ${client.surname} saved successfully! (id: ${data.id})`
+      );
+    } catch (err) {
+      console.error("Error saving client:", err);
+      alert("Error saving client data. Check console for details.");
+    }
+  };
 
   return (
     <div className="mt-10 items-center justify-center bg-gray-50 px-4">
-
       {error && <p className="text-red-600 text-center mt-4">{error}</p>}
 
       {clients.length > 0 && (
@@ -72,11 +158,21 @@ const Gateway = () => {
           <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Name</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Surname</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">ID Number</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Surname
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  ID Number
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -92,10 +188,16 @@ const Gateway = () => {
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => handleCheckBanks(client)}
+                      onClick={() => handleCheckAssets(client)}
                       className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                     >
                       view assets
+                    </button>
+                    <button
+                      onClick={() => handleSaveDeceasedClientsData(client)}
+                      className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 ml-5"
+                    >
+                      Save
                     </button>
                   </td>
                 </tr>
@@ -115,7 +217,10 @@ const Gateway = () => {
             {banksData?.hasAssets ? (
               <div className="space-y-2 text-center">
                 <p className="text-gray-700">
-                  <strong>{banksData.name} {banksData.surname}</strong> had the following assets:
+                  <strong>
+                    {banksData.name} {banksData.surname}
+                  </strong>{" "}
+                  had the following assets:
                 </p>
                 <ul className="text-left list-disc list-inside">
                   {banksData.assets.map((asset, index) => (
@@ -125,7 +230,45 @@ const Gateway = () => {
               </div>
             ) : (
               <p className="text-center text-gray-700">
-                This deceased has no assets recorded.
+                This deceased has no banks assets recorded.
+              </p>
+            )}
+            {deedsData?.hasAssets ? (
+              <div className="space-y-2 text-center">
+                <p className="text-gray-700">
+                  <strong>
+                    {deedsData.name} {deedsData.surname}
+                  </strong>{" "}
+                  had the following assets:
+                </p>
+                <ul className="text-left list-disc list-inside">
+                  {deedsData.assets.map((asset, index) => (
+                    <li key={index}>{asset}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-center text-gray-700">
+                This deceased has no properties recorded.
+              </p>
+            )}
+            {insurancesData?.hasAssets ? (
+              <div className="space-y-2 text-center">
+                <p className="text-gray-700">
+                  <strong>
+                    {insurancesData.name} {insurancesData.surname}
+                  </strong>{" "}
+                  had the following assets:
+                </p>
+                <ul className="text-left list-disc list-inside">
+                  {insurancesData.assets.map((asset, index) => (
+                    <li key={index}>{asset}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-center text-gray-700">
+                This deceased has no Insurance assets recorded.
               </p>
             )}
             <div className="mt-6 text-center">

@@ -13,7 +13,7 @@ const AddClientsToHomeAffairs = () => {
   };
 
   const handleAddClient = async () => {
-    const res = await fetch("/api/HomeAffairs", {
+    const res = await fetch("http://localhost:3000/api/HomeAffairs", {
       method: "POST",
       body: JSON.stringify(form),
     });
@@ -24,7 +24,7 @@ const AddClientsToHomeAffairs = () => {
   };
 
   const fetchClients = async () => {
-    const res = await fetch("/api/HomeAffairs");
+    const res = await fetch("http://localhost:3000/api/HomeAffairs");
     const data = await res.json();
     setClients(data);
     if (!res.ok) {
