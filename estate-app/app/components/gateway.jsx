@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
-const Gateway = () => {
+const Gateway = dynamic(() => Promise.resolve(GatewayComponent), { ssr: false });
+
+const GatewayComponent = () => {
   const router = useRouter();
   const [clients, setClients] = useState([]); // now plural
   const [error, setError] = useState("");
@@ -11,6 +14,8 @@ const Gateway = () => {
   const [deedsData, setDeedsData] = useState(null);
   const [insurancesData, setInsurancesData] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+
 
   useEffect(() => {
     fetchAllDeceased();
@@ -118,6 +123,7 @@ const Gateway = () => {
   };
 
   const handleCheckAssets = (client) => {
+    setSelectedClient(client);
     handleCheckBanks(client);
     handleCheckDeedsOffce(client);
     handleCheckInsurances(client);
@@ -189,15 +195,9 @@ const Gateway = () => {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => handleCheckAssets(client)}
-                      className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                      className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 cursor-pointer"
                     >
                       view assets
-                    </button>
-                    <button
-                      onClick={() => handleSaveDeceasedClientsData(client)}
-                      className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 ml-5"
-                    >
-                      Save
                     </button>
                   </td>
                 </tr>
@@ -278,6 +278,12 @@ const Gateway = () => {
               >
                 Close
               </button>
+              <button
+                onClick={() => handleSaveDeceasedClientsData(selectedClient)}
+                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 ml-5"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>
@@ -286,4 +292,4 @@ const Gateway = () => {
   );
 };
 
-export default Gateway;
+export default GatewayComponent;

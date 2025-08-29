@@ -4,7 +4,8 @@ import AddClientsToBanks from "./addClientsToBanks";
 import AddClientsToHomeAffairs from "./addClientsToHomeAffairs";
 import AddClientsToDeedsOffice from "./addClientsToDeedsOffice";
 import AddClientsToInsurances from "./addClientsToInsurances";
-import Gateway from "./gateway";
+
+import GatewayComponent from "./gateway";
 
 const MasterHighCourtHomePage = () => {
   return (
@@ -19,7 +20,7 @@ const MasterHighCourtHomePage = () => {
       <div className="w-full max-w-7xl space-y-12">
         {/* Gateway */}
         <div>
-          <Gateway />
+          <GatewayComponent />
         </div>
 
         {/* 2-column Grid: Home Affairs & Credit Score */}

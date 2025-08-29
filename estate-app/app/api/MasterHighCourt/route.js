@@ -6,7 +6,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    const docRef = await addDoc(collection(db, "MasterHighCourt"), body);
+    const docRef = await addDoc(collection(db, "masterOfHighCourt"), body);
 
     return NextResponse.json({ id: docRef.id }, { status: 200 });
   } catch (error) {
@@ -15,5 +15,5 @@ export async function POST(req) {
   }
 }
 
-// optional GET handler if you want
+
 
